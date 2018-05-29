@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"context"
@@ -94,7 +94,7 @@ func reviewResponseErr(code int, err string) (*logical.Response, error) {
 	})
 }
 
-// reviewResponseDeny packages an error response for Kubernetes.
+// reviewResponseDeny packages a deny response for Kubernetes.
 func reviewResponseDeny(reason string) (*logical.Response, error) {
 	// Deny. HTTP code is OK, because we're not actually denying the review request -
 	// just saying that the apiserver should deny the client.

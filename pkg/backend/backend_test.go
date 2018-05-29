@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"bytes"
@@ -79,7 +79,6 @@ func reviewToken(t *testing.T, url, token, bearer string) (int, authv1.TokenRevi
 			},
 		})
 	require.NoError(t, err, "err encoding json")
-	// fmt.Println("sending request: ", string(buf))
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(buf))
 	require.NoError(t, err, "err creating http request")
 	req.Header.Add("Content-Type", "application/json")
@@ -93,7 +92,6 @@ func reviewToken(t *testing.T, url, token, bearer string) (int, authv1.TokenRevi
 	require.NoError(t, err, "err making http request")
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	// fmt.Println("received response: ", string(body))
 	var respReview authv1.TokenReview
 	decodeErr := json.Unmarshal(body, &respReview)
 	return resp.StatusCode, respReview.Status, decodeErr

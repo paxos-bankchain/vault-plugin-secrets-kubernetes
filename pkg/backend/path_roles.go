@@ -69,11 +69,11 @@ func pathRoles() *framework.Path {
 	}
 }
 
-type extra map[string][]string
+type Extra map[string][]string
 
 type roleEntry struct {
 	Groups     []string      `json:"groups"`
-	Extra      extra         `json:"extra"`
+	Extra      Extra         `json:"extra"`
 	DefaultTTL time.Duration `json:"default_ttl"`
 	MaxTTL     time.Duration `json:"max_ttl"`
 }
@@ -113,7 +113,7 @@ func pathRolesRead(ctx context.Context, req *logical.Request, d *framework.Field
 }
 
 func pathRolesWrite(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
-	e := make(extra)
+	e := make(Extra)
 	err := mapstructure.Decode(d.Get("extra"), &e)
 	if err != nil {
 		return logical.ErrorResponse("extra must be a map: string -> list of strings"), nil

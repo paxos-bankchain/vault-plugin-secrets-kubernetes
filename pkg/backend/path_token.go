@@ -34,7 +34,7 @@ type tokenEntry struct {
 	Username       string    `json:"username"`
 	UID            string    `json:"uid"`
 	Groups         []string  `json:"groups"`
-	Extra          extra     `json:"extra"`
+	Extra          Extra     `json:"extra"`
 }
 
 func (b *backend) pathTokenRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {

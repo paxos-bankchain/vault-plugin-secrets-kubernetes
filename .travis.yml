@@ -7,6 +7,9 @@ go:
 env:
 - CHANGE_MINIKUBE_NONE_USER=true
 
+# All deps are vendored and checked in.
+install: true
+
 before_script:
 # Download kubectl, which is a requirement for using minikube.
 - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
@@ -19,5 +22,6 @@ before_script:
 # Wait for Kubernetes to be up and ready.
 - JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1; done
 
-script: KUBE_ADDR=https://$(minikube ip):8443 go test -v ./...
-
+script:
+ - CGO_ENABLED=0 go build -o bin/kubernetes-credential-provider-vault ./cmd/kubernetes-credential-provider-vault
+ - KUBE_ADDR=https://$(minikube ip):8443 go test -v ./...

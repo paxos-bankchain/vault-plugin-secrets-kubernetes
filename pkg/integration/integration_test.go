@@ -446,7 +446,7 @@ path "kubernetes/token/eng" {
 	require.NoError(t, err)
 	token := tokenResp.Data["token"].(string)
 	r.assertAllowed(t, token, expectedAllow{
-		usernameLike: "v_userpass-mnt-testuser_eng_.*",
+		usernameLike: "testuser_auth_userpass_.*",
 		groups:       []string{"eng"},
 	})
 }

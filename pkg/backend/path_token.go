@@ -47,14 +47,30 @@ func (b *backend) pathTokenRead(ctx context.Context, req *logical.Request, d *fr
 		return logical.ErrorResponse(fmt.Sprintf("Unknown role: %s", roleName)), nil
 	}
 
-	// TODO: See if we can get a stable EntityID-derived identifier in here.
-	salt, err := b.Salt(ctx)
-	if err != nil {
-		return nil, err
+	var username, uid string
+	if req.EntityID != "" {
+		// Use available entity information if we can.
+		entity, err := b.System().EntityInfo(req.EntityID)
+		if err != nil {
+			return nil, err
+		}
+		uid = entity.ID
+		if len(entity.Aliases) > 0 {
+			// Take the first alias available for the username.
+			alias := entity.Aliases[0]
+			username = fmt.Sprintf("%s_%s", alias.Name, alias.MountAccessor)
+		} else {
+			// If no aliases, use the display name, role name, and entity ID.
+			username = fmt.Sprintf("v_%s_%s_%s", req.DisplayName, roleName, uid)
+		}
+	} else {
+		// If no entity, use the display name, role name, and a UUID.
+		uid, err = uuid.GenerateUUID()
+		if err != nil {
+			return nil, err
+		}
+		username = fmt.Sprintf("v_%s_%s_%s", req.DisplayName, roleName, uid)
 	}
-	username := fmt.Sprintf("v_%s_%s_%s", req.DisplayName, roleName, salt.SaltID(req.ClientToken))
-	// The UID should be opaque, but stable with the username. Just salt + hash the username.
-	uid := salt.SaltID(username)
 
 	secret, err := uuid.GenerateUUID()
 	if err != nil {

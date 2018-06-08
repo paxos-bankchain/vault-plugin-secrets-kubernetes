@@ -1,0 +1,22 @@
+# The webhook server.
+clusters:
+  - name: vault
+    cluster:
+      # In a real configuration, this would be HTTPS with trust configured for
+      # the Vault CA.
+      server: http://127.0.0.1:8200/v1/kubernetes/tokenreviews
+
+
+# The webhook client (the api server)
+users:
+  - name: api-server
+    user:
+      token: unused
+
+current-context: webhook
+contexts:
+- context:
+    cluster: vault
+    user: api-server
+  name: webhook
+
